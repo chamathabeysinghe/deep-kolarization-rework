@@ -12,6 +12,7 @@ from keras.callbacks import ModelCheckpoint, TensorBoard
 from keras.layers import Input
 from keras.models import load_model
 from keras.optimizers import Adam
+from keras.utils import plot_model
 
 from model.flowchroma_network import FlowChroma
 from model.fusion_layer import FusionLayer
@@ -76,6 +77,7 @@ val_batch_size = args.val_batch_size
 n_epochs_to_train = args.n_epochs_to_train
 ckpt_period = args.ckpt_period
 
+# no need to use this if we are working on dynamic shapes
 time_steps, h, w = frames_per_video, default_nn_input_height, default_nn_input_width
 
 initial_epoch = 0
@@ -89,14 +91,16 @@ if len(ckpts) != 0:
 
 else:
     # no ckpts
-    enc_input = Input(shape=(time_steps, h, w, 1), name='encoder_input')
-    incep_out = Input(shape=(time_steps, 1536), name='inception_input')
+    enc_input = Input(batch_shape=(None, None, None, 1), name='encoder_input')
+    incep_out = Input(batch_shape=(None, 1536), name='inception_input')
 
     model = FlowChroma([enc_input, incep_out]).build()
 
 opt = Adam(lr=lr)
 model.compile(optimizer=opt, loss='mse', metrics=['accuracy'])
-# generate_model_summaries(model)
+
+# model.summary(line_length=150)
+# plot_model(model, to_file='flowchroma.png')
 
 n_lab_records = len(glob.glob('{0}/*.npy'.format(dir_lab_records)))
 n_resnet_records = len(glob.glob('{0}/*.npy'.format(dir_resnet_csv)))

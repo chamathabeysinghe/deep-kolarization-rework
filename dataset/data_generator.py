@@ -75,4 +75,10 @@ class DataGenerator(keras.utils.Sequence):
 
             y[i, :, :, :, :] = lab_record[:, :, :, 1:]
 
-        return x, y
+        # reshape the input tensors in order to support deep koalarization model
+        x_1 = [
+            np.reshape(x[0], (self.batch_size * self.time_steps, self.h, self.w, 1)),
+            np.reshape(x[1], (self.batch_size * self.time_steps, 1536))
+        ]
+        y_1 = np.reshape(y, (self.batch_size * self.time_steps, self.h, self.w, 2))
+        return x_1, y_1
