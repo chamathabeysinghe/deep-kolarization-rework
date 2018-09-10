@@ -92,7 +92,7 @@ if len(ckpts) != 0:
 else:
     # no ckpts
     enc_input = Input(batch_shape=(None, None, None, 1), name='encoder_input')
-    incep_out = Input(batch_shape=(None, 1536), name='inception_input')
+    incep_out = Input(batch_shape=(None, 1000), name='inception_input')
 
     model = FlowChroma([enc_input, incep_out]).build()
 

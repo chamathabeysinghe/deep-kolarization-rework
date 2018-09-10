@@ -61,7 +61,7 @@ class DataGenerator(keras.utils.Sequence):
         """
 
         x = [np.empty((self.batch_size, self.time_steps, self.h, self.w, 1)),
-             np.empty((self.batch_size, self.time_steps, 1536))]
+             np.empty((self.batch_size, self.time_steps, 1000))]
 
         y = np.empty((self.batch_size, self.time_steps, self.h, self.w, 2))
 
@@ -78,7 +78,7 @@ class DataGenerator(keras.utils.Sequence):
         # reshape the input tensors in order to support deep koalarization model
         x_1 = [
             np.reshape(x[0], (self.batch_size * self.time_steps, self.h, self.w, 1)),
-            np.reshape(x[1], (self.batch_size * self.time_steps, 1536))
+            np.reshape(x[1], (self.batch_size * self.time_steps, 1000))
         ]
         y_1 = np.reshape(y, (self.batch_size * self.time_steps, self.h, self.w, 2))
         return x_1, y_1
