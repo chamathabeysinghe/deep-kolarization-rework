@@ -135,6 +135,28 @@ def getInputRange(frames_count, time_steps, current_frame):
     return frame_selection
 
 
+# def get_nn_input(l_layer, resnet_out):
+#     '''
+#     Define the flowchroma input
+#     '''
+#     frames_count = l_layer.shape[0]
+#     time_steps = frames_per_video
+#     X = []
+#     Y = []
+#
+#     for i in range(frames_count):
+#         frame_index_selection = getInputRange(frames_count, time_steps, i)
+#         frame_selection = []
+#         resnet_selection = []
+#         for j in frame_index_selection:
+#             frame_selection.append(l_layer[j])
+#             resnet_selection.append(resnet_out[j])
+#         X.append(frame_selection)
+#         Y.append(resnet_selection)
+#
+#     X = np.asarray(X)[:,:,:,:,0]
+#     Y = np.asarray(Y)
+#     return [X, Y]
 def get_nn_input(l_layer, resnet_out):
     '''
     Define the flowchroma input
@@ -145,14 +167,16 @@ def get_nn_input(l_layer, resnet_out):
     Y = []
 
     for i in range(frames_count):
-        frame_index_selection = getInputRange(frames_count, time_steps, i)
-        frame_selection = []
-        resnet_selection = []
-        for j in frame_index_selection:
-            frame_selection.append(l_layer[j])
-            resnet_selection.append(resnet_out[j])
-        X.append(frame_selection)
-        Y.append(resnet_selection)
+#         frame_index_selection = getInputRange(frames_count, time_steps, i)
+#         frame_selection = []
+#         resnet_selection = []
+        X.append(l_layer[i])
+        Y.append(resnet_out[i])
+#         for j in frame_index_selection:
+#             frame_selection.append(l_layer[j])
+#             resnet_selection.append(resnet_out[j])
+#         X.append(frame_selection)
+#         Y.append(resnet_selection)
 
     X = np.asarray(X)
     Y = np.asarray(Y)
@@ -168,9 +192,9 @@ def post_process_predictions(original_l_layers, predicted_AB_layers):
     predicted_frames = []
     for i in range(total_frames):
         l_layer = original_l_layers[i]
-        a_layer = np.multiply(predicted_AB_layers[i, time_steps - 1, :, :, 0],
+        a_layer = np.multiply(predicted_AB_layers[i, :, :, 0],
                               128)  # select the first frame outof three predictions
-        b_layer = np.multiply(predicted_AB_layers[i, time_steps - 1, :, :, 1], 128)
+        b_layer = np.multiply(predicted_AB_layers[i, :, :, 1], 128)
         frame = np.empty((240, 320, 3))
         frame[:, :, 0] = l_layer
         frame[:, :, 1] = a_layer
